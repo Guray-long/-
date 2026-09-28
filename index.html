@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="blue" data-mode="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#003d9b">
+  <meta name="description" content="ChowHuay Pro แอปจัดการสต็อก ขาย และต้นทุน สำหรับร้านโชว์ห่วย">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ChowHuay Pro">
+  <title>ChowHuay Pro | สต็อกและขาย</title>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://drive.google.com">
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.googleusercontent.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">ข้ามไปยังเนื้อหาหลัก</a>
+
+  <!-- ============ PASSCODE LOCK ============ -->
+  <main id="passcode-overlay" class="pin-screen" aria-labelledby="pin-title">
+    <div class="pin-brand">
+      <img src="icons/icon-192.png" alt="โลโก้ ChowHuay Pro" width="44" height="44">
+      <h1 class="h2 text-primary">ChowHuay Pro</h1>
+    </div>
+    <div class="pin-mark" aria-hidden="true">
+      <span class="material-symbols-outlined text-primary" aria-hidden="true">storefront</span>
+    </div>
+    <h2 class="title mt" id="pin-title">พร้อมเปิดร้านแล้ว</h2>
+    <p class="body pin-helper">ใส่รหัสผ่านเพื่อดูข้อมูลและเริ่มขาย</p>
+    <div class="pin-dots" aria-label="รหัสผ่าน 4 หลัก">
+      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <p class="pin-status" id="pin-status" role="status" aria-live="polite"></p>
+    <div class="pin-actions">
+      <button class="btn btn-ghost btn-sm" id="pin-retry">ตรวจการเชื่อมต่อ</button>
+      <button class="btn btn-ghost btn-sm text-error" id="pin-reset">รีเซ็ตแอป</button>
+    </div>
+    <div class="numpad" aria-label="แป้นตัวเลข">
+      <button type="button" onclick="enterPin(1)" aria-label="เลข 1">1</button><button type="button" onclick="enterPin(2)" aria-label="เลข 2">2</button><button type="button" onclick="enterPin(3)" aria-label="เลข 3">3</button>
+      <button type="button" onclick="enterPin(4)" aria-label="เลข 4">4</button><button type="button" onclick="enterPin(5)" aria-label="เลข 5">5</button><button type="button" onclick="enterPin(6)" aria-label="เลข 6">6</button>
+      <button type="button" onclick="enterPin(7)" aria-label="เลข 7">7</button><button type="button" onclick="enterPin(8)" aria-label="เลข 8">8</button><button type="button" onclick="enterPin(9)" aria-label="เลข 9">9</button>
+      <div></div>
+      <button type="button" onclick="enterPin(0)" aria-label="เลข 0">0</button>
+      <button type="button" class="icon-btn" onclick="deletePin()" aria-label="ลบเลขล่าสุด"><span class="material-symbols-outlined" aria-hidden="true">backspace</span></button>
+    </div>
+    <p class="caption mt pin-default">รหัสเริ่มต้น 1234 เปลี่ยนได้ที่เมนูตั้งค่า</p>
+  </main>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="app-shell" class="hidden" aria-hidden="true">
+    <!-- TopAppBar -->
+    <header class="app-topbar">
+      <div class="brand">
+        <img src="icons/icon-192.png" alt="">
+        <span>ChowHuay Pro</span>
+      </div>
+      <div class="actions">
+        <span class="sync-status" id="sync-status" role="status" aria-live="polite">กำลังตรวจสอบการเชื่อมต่อ</span>
+        <button class="topbar-btn" id="topbar-sync" title="ซิงก์ข้อมูล" aria-label="ซิงก์ข้อมูล">
+          <span class="material-symbols-outlined" aria-hidden="true">sync</span>
+        </button>
+        <button class="topbar-btn" data-route="settings" title="ตั้งค่า" aria-label="ตั้งค่า">
+          <span class="avatar">U</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom nav (all screen sizes) -->
+    <nav class="bottom-nav" aria-label="เมนูหลัก">
+      <button class="nav-item" data-route="dashboard"><span class="material-symbols-outlined" aria-hidden="true">dashboard</span><span>ภาพรวม</span></button>
+      <button class="nav-item" data-route="pos"><span class="material-symbols-outlined" aria-hidden="true">point_of_sale</span><span>ขาย</span></button>
+      <button class="nav-item" data-route="inventory"><span class="material-symbols-outlined" aria-hidden="true">inventory_2</span><span>สต็อก</span></button>
+      <button class="nav-item" data-route="reports"><span class="material-symbols-outlined" aria-hidden="true">assessment</span><span>รายงาน</span></button>
+      <button class="nav-item" data-route="settings"><span class="material-symbols-outlined" aria-hidden="true">settings</span><span>ตั้งค่า</span></button>
+    </nav>
+
+    <!-- Views -->
+    <main class="app-main" id="main-content" tabindex="-1">
+      <div id="view-dashboard" class="view"></div>
+      <div id="view-pos" class="view"></div>
+      <div id="view-inventory" class="view"></div>
+      <div id="view-reports" class="view"></div>
+      <div id="view-settings" class="view"></div>
+    </main>
+    <footer class="app-footer">Created by CodingPhius Creativities <span aria-hidden="true">·</span> <a href="mailto:alphaphius.tkh@gmail.com">alphaphius.tkh@gmail.com</a></footer>
+  </div>
+
+  <!-- scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/pos.js"></script>
+  <script src="js/views/inventory.js"></script>
+  <script src="js/views/reports.js"></script>
+  <script src="js/views/settings.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => App.init(), { once: true });
+    else App.init();
+  </script>
+</body>
+</html>
